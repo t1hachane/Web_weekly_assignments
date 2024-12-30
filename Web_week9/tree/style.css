@@ -1,0 +1,50 @@
+.folder {
+    list-style-type: none;
+    cursor: pointer;
+    color: purple;
+}
+
+.folder ul {
+    display: none;
+    padding-left: 20px;
+}
+
+.folder .toggle::before {
+    content: "+ ";
+    border: 1px solid #000000;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 2px 2px 2px;
+    width: 10px;
+    height: 10px;
+}
+
+.folder.open > .toggle::before {
+    content: "- ";
+    border: 1px solid #000000;
+    border-radius: 4px;
+    margin-bottom: 1px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 2px 2px 2px;
+    width: 10px;
+    height: 10px;
+}
+
+.folder img {
+    width: 20px;
+    height: 20px;
+    /* margin-right: 5px; */
+    /* padding: 2px 0px 2px 2px; */
+    display: inline-block;
+    vertical-align: text-bottom; /* Align the icon to the bottom of the text */
+    margin-left: 5px;
+}
+
+.selected {
+    font-weight: bold;
+    color: darkred;
+}

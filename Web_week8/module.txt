@@ -1,0 +1,48 @@
+1; có 2 cách import:
+- 1 là import synchronous: phải import hết tất cả các module rồi đoạn code phía sau mới được thực hiện: 	import *  as HRM from './lib.js';
+- 2 là import asynchronous: import('./lib.js').then(HRM => { => với cách import này thì đoạn code let p1 = new HRM.PersonF("Hoàng Tùng", "Bolero"); được thực thi trước khi lệnh import chạy xong (vì đã có lệnh import cách 1 ở phía trên)
+(hay import() là một hàm trả về một Promise, cho phép tải module bất đồng bộ.)
+
+
+2; giải thích các câu lệnh log ra
+- Hoàng Tùng Bolero => từ lệnh gọi sayHello() của dòng p1.sayHello(); với p1 là 1 đối tượng thuộc function PersonF
+- c.js:17 Trần Bình Ballad => giải thích tương tự trên
+- module/:30 function => in ra kiểu của PersonF, vì PersonF được khai báo trong 'f.js' là 1 person (function Person(fn, al) {) nên sẽ có kiểu là function 
+- module/:31 function => giải thích tương tự trên
+- f.js:9 Hoàng Ngân Diamon  
+  f.js:19  with salary 1000
+=> từ lệnh gọi staff.sayHello() với staff là 1 đối tượng thuộc function StaffF
+- f.js:22 Hoàng Ngân good bye everyone!
+=> từ lệnh gọi staff.sayGoodbye() với staff là 1 đối tượng thuộc function StaffF
+- c.js:17 Trần Bình Ballad
+  c.js:32  with salary 1000
+  c.js:36 Trần Bình good bye everyone!
+=> từ lệnh gọi staff.sayHello() và staff.sayGoodbye() với staff lúc này được gán mới là 1 đối tượng thuộc class StaffC
+
+- f.js:9 Trần Bình Ballad
+  lib.js:17 Trần Bình good bye everyone!
+=> từ lệnh gọi staff.sayHello() và staff.sayGoodbye() với staff lúc này được gán mới là 1 đối tượng thuộc class StaffD. Tuy nhiên 1 class (StaffD) kế thừa từ 1 function (PersonF) nên nó sẽ không ghi đè được hàm sayHello() của function gốc ban đầu)
+
+- module/:49 function 
+  module/:50 function
+  module/:51 function
+=> in ra kiểu của StaffC, StaffD, StaffF. Tuy StaffC, StaffD được khai báo trước đó là class nhưng kết quả như vậy là do bản chất của JavaScript: class thực chất chỉ là một cách viết (syntactic sugar) mới của hàm constructor (constructor function).
+
+
+- Đoạn phía dưới là log của cách import async => Các log trong phần này tương tự phần trên vì chúng thực hiện lại các bước giống nhau. Điểm khác biệt duy nhất là cách import.
+
+f.js:9 Hoàng Tùng Bolero
+c.js:17 Trần Bình Ballad
+module/:66 function
+module/:67 function
+f.js:9 Hoàng Ngân Diamon
+f.js:19  with salary 1000
+f.js:22 Hoàng Ngân good bye everyone!
+c.js:17 Trần Bình Ballad
+c.js:32  with salary 1000
+c.js:36 Trần Bình good bye everyone!
+f.js:9 Trần Bình Ballad
+lib.js:17 Trần Bình good bye everyone!
+module/:85 function
+module/:86 function
+module/:87 function

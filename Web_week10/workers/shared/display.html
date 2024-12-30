@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Xem Ảnh Đã Xử Lý</title>
+    <style>
+      .nodisplay {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      Ảnh đã xử lý Sepia:
+      <canvas id="viewerCanvas" class="nodisplay"></canvas>
+    </div>
+    <script>
+      window.onload = function () {
+        try {
+          const worker = new SharedWorker("worker.js");
+
+          worker.port.start();
+
+          const canvas = document.getElementById("viewerCanvas");
+          const ctx = canvas.getContext("2d");
+
+          worker.port.onmessage = function (e) {
+            console.log("Message received in viewer:", e.data);
+            if (e.data.type === "processedImage") {
+              console.log("Processing image data");
+              canvas.width = e.data.width;
+              canvas.height = e.data.height;
+              console.log("Canvas dimensions:", canvas.width, canvas.height);
+
+              ctx.putImageData(
+                new ImageData(e.data.pixels, canvas.width, canvas.height),
+                0,
+                0
+              );
+              canvas.classList.remove("nodisplay");
+            }
+          };
+
+          worker.onerror = function (error) {
+            console.log("Worker error:", error);
+          };
+
+          worker.port.postMessage({ type: "getProcessedImage" });
+        } catch (error) {
+          console.error("Error creating worker:", error);
+        }
+      };
+    </script>
+  </body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Image Manipulation Shared Worker</title>
+</head>
+<body>
+    <div>
+        <label>Chọn tệp ảnh:</label>
+        <input type="file" id="FileUpload1" accept=".png,.jpg" />
+    </div>
+    <div>
+        Ảnh gốc:		
+        <img class="preview nodisplay" />
+    </div>
+    <div>
+        Ảnh qua biến đổi Sepia:
+        <canvas class="target nodisplay"></canvas>
+    </div>
+    <a href="display.html">Xem Ảnh biến đổi</a>
+
+    <script src="index.js"></script>
+</body>
+</html>

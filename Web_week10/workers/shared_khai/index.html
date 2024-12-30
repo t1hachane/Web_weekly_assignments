@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Shared Worker</title>
+    <style>
+      .nodisplay {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <label>Chọn tệp ảnh:</label>
+      <input type="file" id="FileUpload1" accept=".png,.jpg" />
+    </div>
+    <div>
+      Ảnh gốc:
+      <img class="preview nodisplay" />
+    </div>
+    <div>
+      Ảnh qua biến đổi Sepia:
+      <canvas class="target nodisplay"></canvas>
+    </div>
+    <div>
+      <a href="view.html" target="_blank">Another page to view</a>
+    </div>
+
+    <script>
+      // Khởi tạo shared worker
+      const worker = new SharedWorker("index.js");
+
+      // Nếu người dùng kích chọn tệp ảnh
+      document.getElementById("FileUpload1").onchange = function () {
+        let preview = document.querySelector("img.preview");
+        let canvas = document.querySelector("canvas.target");
+        // Tệp đã chọn
+        let file = this.files[0];
+        // API đọc tệp
+        let reader = new FileReader();
+
+        // Gọi lại khi đọc xong tệp
+        reader.onload = function () {
+          // Hiển thị ảnh gốc
+          preview.src = reader.result;
+          preview.classList.remove("nodisplay");
+
+          setTimeout(function () {
+            // Vẽ ảnh lên canvas
+            canvas.width = preview.clientWidth;
+            canvas.height = preview.clientHeight;
+            let cvContext = canvas.getContext("2d");
+            cvContext.drawImage(preview, 0, 0, canvas.width, canvas.height);
+
+            // Gọi lại khi shared worker xử lý xong ảnh
+            worker.port.onmessage = function (e) {
+              // e.data là các pixels đã qua xử lý
+              // Vẽ lại canvas với dữ liệu ảnh đã qua xử lý
+              cvContext.putImageData(
+                new ImageData(e.data.pixels, canvas.width, canvas.height),
+                0,
+                0
+              );
+              // Hiển thị canvas
+              canvas.classList.remove("nodisplay");
+            };
+
+            // Lấy dữ liệu ảnh từ canvas
+            let imgData = cvContext.getImageData(
+              0,
+              0,
+              canvas.width,
+              canvas.height
+            );
+
+            // Gửi dữ liệu pixels và kích thước ảnh cho worker
+            worker.port.postMessage({
+              type: "process",
+              pixels: imgData.data,
+              width: canvas.width,
+              height: canvas.height,
+            });
+          }, 100);
+        };
+
+        // Đọc tệp
+        if (file) reader.readAsDataURL(file);
+      };
+    </script>
+  </body>
+</html>
